@@ -11,5 +11,12 @@ const employees = [
   { id: 10, name: "Gwen Grollmann" },
 ];
 
+function addEmployee(employeeName) {
+  const newEmployee = { id: employees.length + 1, name: employeeName };
+  employees.push(newEmployee);
+  return newEmployee;
+}
+
 /* WARNING: this must remain the default export in order for the tests to work! */
-export default employees;
+
+module.export = { employees, addEmployee };
