@@ -1,19 +1,20 @@
-const express = require("express");
-const app = express();
-const { employees, addEmployee } = require("../db/employees");
+import express from "express";
+import employees, { addEmployee } from "../db/employees.js";
 
-app.route("/").get((req, res) => {
+const router = express.Router();
+
+router.route("/").get((req, res) => {
   res.send(employees);
 });
 
 // Note: this middleware has to come first! Otherwise, Express will treat
 // "random" as the argument to the `id` parameter of /employees/:id.
-app.route("/random").get((req, res) => {
+router.route("/random").get((req, res) => {
   const randomIndex = Math.floor(Math.random() * employees.length);
   res.send(employees[randomIndex]);
 });
 
-app.route("/:id").get((req, res) => {
+router.route("/:id").get((req, res) => {
   const { id } = req.params;
 
   // req.params are always strings, so we need to convert `id` into a number
@@ -27,15 +28,17 @@ app.route("/:id").get((req, res) => {
   res.send(employee);
 });
 
-app.route("/").post((req, res) => {
-  const name = req.body;
-  const addedEmployee = addEmployee(name);
-  if (!addedEmployee) {
+router.route("/").post((req, res) => {
+  const body = req.body;
+  const name = body.name;
+  if (!name) {
     return res.status(400).json({ error: "Failed to add employee" });
   }
+
+  const addedEmployee = addEmployee(name);
   return res
     .status(201)
     .json({ message: "Added Employee. ", data: addedEmployee });
 });
 
-module.exports = app;
+export default router;
